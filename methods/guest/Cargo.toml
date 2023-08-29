@@ -8,8 +8,6 @@ name = "fibonacci"
 path = "src/bin/fibonacci.rs"
 
 [dependencies]
-# TODO remove ethabi
-ethabi = { version = "18.0", default-features = false }
 alloy-sol-types = { version = "0.3.2", default-features = false }
 chess-engine = { git = "https://github.com/adam-mcdaniel/chess-engine", rev = "522a5672b93068b7218ab6c137901d79d2901c69" }
 # Directly import radium to silence warning about unused patch. See https://github.com/risc0/risc0/issues/549

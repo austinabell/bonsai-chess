@@ -18,7 +18,6 @@ use std::io::Read;
 
 use alloy_sol_types::{sol, SolType};
 use chess_engine::{Evaluate, Game, GameResult};
-use ethabi::Token;
 use risc0_zkvm::guest::env;
 
 risc0_zkvm::guest::entry!(main);
@@ -84,10 +83,9 @@ fn main() {
 
     // Commit the journal that will be received by the application contract.
     // Encoded types should match the args expected by the application callback.
-    // TODO update encode to use alloy
-    env::commit_slice(&ethabi::encode(&[
-        Token::String(board_state),
-        Token::String(result_fen),
-        Token::Uint((state as u8).into()),
-    ]));
+    env::commit_slice(&<sol!(tuple(string, string, uint8))>::encode(&(
+        board_state,
+        result_fen,
+        state as u8,
+    )));
 }
