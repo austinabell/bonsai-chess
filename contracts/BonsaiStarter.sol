@@ -23,10 +23,16 @@ import {BonsaiCallbackReceiver} from "bonsai/BonsaiCallbackReceiver.sol";
 /// @dev This contract demonstrates one pattern for offloading the computation of an expensive
 //       or difficult to implement function to a RISC Zero guest running on Bonsai.
 contract BonsaiStarter is BonsaiCallbackReceiver {
-    /// @notice Cache of the results calculated by our guest program in Bonsai.
-    /// @dev Using a cache is one way to handle the callback from Bonsai. Upon callback, the
-    ///      information from the journal is stored in the cache for later use by the contract.
-    mapping(uint256 => uint256) public fibonacciCache;
+    /// @notice board state in FEN notation.
+    string public fen;
+
+    enum GameState {
+        Ongoing,
+        Win,
+        Lose,
+        Draw
+    }
+    GameState public gameState;
 
     /// @notice Image ID of the only zkVM binary to accept callbacks from.
     bytes32 public immutable fibImageId;
@@ -36,34 +42,65 @@ contract BonsaiStarter is BonsaiCallbackReceiver {
     uint64 private constant BONSAI_CALLBACK_GAS_LIMIT = 100000;
 
     /// @notice Initialize the contract, binding it to a specified Bonsai relay and RISC Zero guest image.
-    constructor(IBonsaiRelay bonsaiRelay, bytes32 _fibImageId) BonsaiCallbackReceiver(bonsaiRelay) {
+    constructor(
+        IBonsaiRelay bonsaiRelay,
+        bytes32 _fibImageId
+    ) BonsaiCallbackReceiver(bonsaiRelay) {
         fibImageId = _fibImageId;
+        fen = string(
+            "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+        );
+        gameState = GameState.Ongoing;
     }
 
-    event CalculateFibonacciCallback(uint256 indexed n, uint256 result);
+    event BoardUpdated(string prevBoard, string nextBoard);
+    event GameOver(GameState gameState);
 
-    /// @notice Returns nth number in the Fibonacci sequence.
-    /// @dev The sequence is defined as 1, 1, 2, 3, 5 ... with fibonacci(0) == 1.
-    ///      Only precomputed results can be returned. Call calculate_fibonacci(n) to precompute.
-    function fibonacci(uint256 n) external view returns (uint256) {
-        uint256 result = fibonacciCache[n];
-        require(result != 0, "value not available in cache");
-        return result;
-    }
+    // /// @notice Returns nth number in the Fibonacci sequence.
+    // /// @dev The sequence is defined as 1, 1, 2, 3, 5 ... with fibonacci(0) == 1.
+    // ///      Only precomputed results can be returned. Call calculate_fibonacci(n) to precompute.
+    // function fibonacci(uint256 n) external view returns (uint256) {
+    //     uint256 result = fibonacciCache[n];
+    //     require(result != 0, "value not available in cache");
+    //     return result;
+    // }
 
     /// @notice Callback function logic for processing verified journals from Bonsai.
-    function storeResult(uint256 n, uint256 result) external onlyBonsaiCallback(fibImageId) {
-        emit CalculateFibonacciCallback(n, result);
-        fibonacciCache[n] = result;
+    function storeResult(
+        string memory prevBoard,
+        string memory nextBoard,
+        GameState state
+    ) external onlyBonsaiCallback(fibImageId) {
+        // Assert that the previous board state matches the current board state in the contract
+        assert(
+            keccak256(abi.encodePacked(prevBoard)) ==
+                keccak256(abi.encodePacked(fen))
+        );
+
+        // Update the board state
+        fen = nextBoard;
+        gameState = state;
+
+        emit BoardUpdated(prevBoard, nextBoard);
+        if (gameState != GameState.Ongoing) {
+            emit GameOver(gameState);
+        }
     }
 
     /// @notice Sends a request to Bonsai to have have the nth Fibonacci number calculated.
     /// @dev This function sends the request to Bonsai through the on-chain relay.
     ///      The request will trigger Bonsai to run the specified RISC Zero guest program with
     ///      the given input and asynchronously return the verified results via the callback below.
-    function calculateFibonacci(uint256 n) external {
+    function makeMove(string memory move) external {
+        if (gameState != GameState.Ongoing) {
+            revert("game is over");
+        }
         bonsaiRelay.requestCallback(
-            fibImageId, abi.encode(n), address(this), this.storeResult.selector, BONSAI_CALLBACK_GAS_LIMIT
+            fibImageId,
+            abi.encode(fen, move),
+            address(this),
+            this.storeResult.selector,
+            BONSAI_CALLBACK_GAS_LIMIT
         );
     }
 }
