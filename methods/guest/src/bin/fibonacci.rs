@@ -72,8 +72,7 @@ fn main() {
     // Type array passed to `ethabi::decode_whole` should match the types encoded in
     // the application contract.
     let (board_state, player_move): (String, String) =
-        CallParams::decode_params(&input_bytes, true)
-            .unwrap_or_else(|_| panic!("input_bytes: {:?}", input_bytes));
+        CallParams::decode_params(&input_bytes, true).unwrap();
 
     // Run the computation.
     let (result, state) = make_move(&board_state, player_move);
