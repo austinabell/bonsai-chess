@@ -27,20 +27,28 @@ contract BonsaiStarterTest is BonsaiTest {
         // Deploy a new starter instance
         BonsaiStarter starter = new BonsaiStarter(
             IBonsaiRelay(bonsaiRelay),
-            queryImageId('FIBONACCI'));
+            queryImageId("FIBONACCI")
+        );
 
         // Anticipate a callback request to the relay
-        vm.expectCall(address(bonsaiRelay), abi.encodeWithSelector(IBonsaiRelay.requestCallback.selector));
-        // Request the callback
-        starter.calculateFibonacci(128);
+        vm.expectCall(
+            address(bonsaiRelay),
+            abi.encodeWithSelector(IBonsaiRelay.requestCallback.selector)
+        );
+
+        // Make a move
+        starter.makeMove(string("e2e4"));
 
         // Anticipate a callback invocation on the starter contract
-        vm.expectCall(address(starter), abi.encodeWithSelector(BonsaiStarter.storeResult.selector));
+        vm.expectCall(
+            address(starter),
+            abi.encodeWithSelector(BonsaiStarter.storeResult.selector)
+        );
         // Relay the solution as a callback
         runPendingCallbackRequest();
 
         // Validate the Fibonacci solution value
-        uint256 result = starter.fibonacci(128);
-        assertEq(result, uint256(407305795904080553832073954));
+        string memory result = starter.fen();
+        assertEq(result, "rnbqkb1r/pppppppp/5n2/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 0");
     }
 }

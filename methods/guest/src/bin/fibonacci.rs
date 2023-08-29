@@ -70,31 +70,11 @@ fn main() {
     let mut input_bytes = Vec::<u8>::new();
     env::stdin().read_to_end(&mut input_bytes).unwrap();
 
-    println!("input_bytes: {:?}", input_bytes);
-
-    // match ethabi::decode(&[ParamType::String, ParamType::String], &input_bytes) {
-    //     Ok(decoded_tokens) => {
-    //         if let ethabi::Token::String(decoded_fen) = &decoded_tokens[0] {
-    //             println!("Decoded FEN: {}", decoded_fen);
-    //         }
-
-    //         if let ethabi::Token::String(decoded_next_move) = &decoded_tokens[1]
-    // {             panic!("Decoded Next Move: {}", decoded_next_move);
-    //         }
-    //     }
-    //     Err(e) => panic!("Decoding error: {:?}", e),
-    // }
-
     // Type array passed to `ethabi::decode_whole` should match the types encoded in
     // the application contract.
     let (board_state, player_move): (String, String) =
         CallParams::decode_params(&input_bytes, true)
             .unwrap_or_else(|_| panic!("input_bytes: {:?}", input_bytes));
-    // let mut input = ethabi::decode_whole(&[ParamType::String, ParamType::String],
-    // &input_bytes)     .unwrap_or_else(|_| panic!("input_bytes: {:?}",
-    // input_bytes))     .into_iter();
-    // let board_state: String = input.next().unwrap().into_string().unwrap();
-    // let player_move: String = input.next().unwrap().into_string().unwrap();
 
     // Run the computation.
     let (result, state) = make_move(&board_state, player_move);
