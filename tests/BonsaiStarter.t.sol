@@ -49,6 +49,6 @@ contract BonsaiChessTest is BonsaiTest {
 
         // Validate the Fibonacci solution value
         string memory result = starter.fen();
-        assertEq(result, "r1bqkbnr/pppppppp/2n5/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 0");
+        assertEq(result, "rnbqkb1r/pppppppp/5n2/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 0");
     }
 }

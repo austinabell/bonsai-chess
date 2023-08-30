@@ -47,7 +47,7 @@ fn make_move(board_fen: &str, player_move: String) -> (Game, GameState) {
     };
 
     // Calculate and play the engine's move.
-    let (m, _, _) = game.board.get_best_next_move(3);
+    let (m, _, _) = game.board.get_best_next_move(2);
     let state = match game.board.play_move(m) {
         GameResult::Continuing(board) => {
             game.board = board;
