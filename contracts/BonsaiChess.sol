@@ -79,7 +79,8 @@ contract BonsaiChess is BonsaiCallbackReceiver {
     }
 
     /// @notice Sends a request to Bonsai generate an engine chess move in response to the move
-    ///         submitted to this function.
+    ///         submitted to this function. This move should be formatted in UCI notation
+    ///         (e.g. "e2e4", "b1c3").
     /// @dev This function sends the request to Bonsai through the on-chain relay.
     ///      The request will trigger Bonsai to run the specified RISC Zero guest program with
     ///      the given input and asynchronously return the verified results via the callback below.
