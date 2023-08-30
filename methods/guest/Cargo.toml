@@ -4,8 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [[bin]]
-name = "fibonacci"
-path = "src/bin/fibonacci.rs"
+name = "chess"
+path = "src/bin/chess.rs"
 
 [dependencies]
 alloy-sol-types = { version = "0.3.2", default-features = false }

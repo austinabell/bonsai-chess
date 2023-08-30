@@ -27,7 +27,7 @@ contract BonsaiChessTest is BonsaiTest {
         // Deploy a new starter instance
         BonsaiChess starter = new BonsaiChess(
             IBonsaiRelay(bonsaiRelay),
-            queryImageId("FIBONACCI")
+            queryImageId("CHESS")
         );
 
         // Anticipate a callback request to the relay
@@ -47,7 +47,7 @@ contract BonsaiChessTest is BonsaiTest {
         // Relay the solution as a callback
         runPendingCallbackRequest();
 
-        // Validate the Fibonacci solution value
+        // Validate the Chess move generated. This assumes a consistent response based on depth.
         string memory result = starter.fen();
         assertEq(result, "rnbqkb1r/pppppppp/5n2/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 0");
     }

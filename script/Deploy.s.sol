@@ -34,8 +34,8 @@ contract Deploy is Script, BonsaiCheats, BonsaiDeploy {
         uploadImages();
 
         // TEMPLATE: Modify this block to match your expected deployment.
-        bytes32 imageId = queryImageId("FIBONACCI");
-        console2.log("Image ID for FIBONACCI is ", vm.toString(imageId));
+        bytes32 imageId = queryImageId("CHESS");
+        console2.log("Image ID for CHESS is ", vm.toString(imageId));
         BonsaiChess app = new BonsaiChess(bonsaiRelay, imageId);
         console2.log("Deployed BonsaiChess to ", address(app));
 
