@@ -56,17 +56,8 @@ contract BonsaiStarter is BonsaiCallbackReceiver {
     event BoardUpdated(string prevBoard, string nextBoard);
     event GameOver(GameState gameState);
 
-    // /// @notice Returns nth number in the Fibonacci sequence.
-    // /// @dev The sequence is defined as 1, 1, 2, 3, 5 ... with fibonacci(0) == 1.
-    // ///      Only precomputed results can be returned. Call calculate_fibonacci(n) to precompute.
-    // function fibonacci(uint256 n) external view returns (uint256) {
-    //     uint256 result = fibonacciCache[n];
-    //     require(result != 0, "value not available in cache");
-    //     return result;
-    // }
-
     /// @notice Callback function logic for processing verified journals from Bonsai.
-    function storeResult(
+    function updateBoard(
         string memory prevBoard,
         string memory nextBoard,
         GameState state
@@ -99,7 +90,7 @@ contract BonsaiStarter is BonsaiCallbackReceiver {
             fibImageId,
             abi.encode(fen, move),
             address(this),
-            this.storeResult.selector,
+            this.updateBoard.selector,
             BONSAI_CALLBACK_GAS_LIMIT
         );
     }

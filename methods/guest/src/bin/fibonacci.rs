@@ -47,7 +47,7 @@ fn make_move(board_fen: &str, player_move: String) -> (Game, GameState) {
     };
 
     // Calculate and play the engine's move.
-    let (m, _, _) = game.board.get_best_next_move(1);
+    let (m, _, _) = game.board.get_best_next_move(3);
     let state = match game.board.play_move(m) {
         GameResult::Continuing(board) => {
             game.board = board;
@@ -69,12 +69,10 @@ fn main() {
     let mut input_bytes = Vec::<u8>::new();
     env::stdin().read_to_end(&mut input_bytes).unwrap();
 
-    // Type array passed to `ethabi::decode_whole` should match the types encoded in
-    // the application contract.
-    let (board_state, player_move): (String, String) =
-        CallParams::decode_params(&input_bytes, true).unwrap();
+    // Decode parameters from the scheduled call on eth.
+    let (board_state, player_move) = CallParams::decode_params(&input_bytes, true).unwrap();
 
-    // Run the computation.
+    // Update the player's move and calculate the engine's move.
     let (result, state) = make_move(&board_state, player_move);
     // NOTE: timer and move count not used in fen notation. Would be ideal to just
     // not include at all, but no other serialization method implemented.

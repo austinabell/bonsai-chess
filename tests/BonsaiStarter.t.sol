@@ -42,13 +42,13 @@ contract BonsaiStarterTest is BonsaiTest {
         // Anticipate a callback invocation on the starter contract
         vm.expectCall(
             address(starter),
-            abi.encodeWithSelector(BonsaiStarter.storeResult.selector)
+            abi.encodeWithSelector(BonsaiStarter.updateBoard.selector)
         );
         // Relay the solution as a callback
         runPendingCallbackRequest();
 
         // Validate the Fibonacci solution value
         string memory result = starter.fen();
-        assertEq(result, "rnbqkb1r/pppppppp/5n2/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 0");
+        assertEq(result, "r1bqkbnr/pppppppp/2n5/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 0");
     }
 }
