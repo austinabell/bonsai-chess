@@ -25,7 +25,7 @@ use risc0_zkvm::sha::Digest;
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about)]
 struct Args {
-    /// Adress for the BonsaiStarter application contract.
+    /// Adress for the BonsaiChess application contract.
     address: Address,
 
     /// Input N for calculating the Nth Fibonacci number.
@@ -55,10 +55,10 @@ async fn main() -> anyhow::Result<()> {
     let input = ethabi::encode(&[ethers::abi::Token::Uint(args.number.into())]);
 
     // Create a CallbackRequest for your contract
-    // example: (contracts/BonsaiStarter.sol).
+    // example: (contracts/BonsaiChess.sol).
     let request = CallbackRequest {
         callback_contract: args.address,
-        // you can use the command `solc --hashes contracts/BonsaiStarter.sol`
+        // you can use the command `solc --hashes contracts/BonsaiChess.sol`
         // to get the value for your actual contract (9f2275c0: update(uint256,uint256))
         function_selector: [0x9f, 0x22, 0x75, 0xc0],
         gas_limit: 3000000,

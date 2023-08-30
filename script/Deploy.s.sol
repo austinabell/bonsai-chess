@@ -8,9 +8,9 @@ import {IBonsaiRelay} from "bonsai/IBonsaiRelay.sol";
 import {BonsaiCheats} from "bonsai/BonsaiCheats.sol";
 
 import {BonsaiDeploy} from "./BonsaiDeploy.sol";
-import {BonsaiStarter} from "../contracts/BonsaiStarter.sol";
+import {BonsaiChess} from "../contracts/BonsaiChess.sol";
 
-/// @notice Deployment script for the BonsaiStarter project.
+/// @notice Deployment script for the BonsaiChess project.
 /// @dev Use the following environment variables to control the deployment:
 ///     * DEPLOYER_ADDRESS address of the wallet to be used for sending deploy transactions.
 ///         Must be unlocked on the RPC provider node.
@@ -36,8 +36,8 @@ contract Deploy is Script, BonsaiCheats, BonsaiDeploy {
         // TEMPLATE: Modify this block to match your expected deployment.
         bytes32 imageId = queryImageId("FIBONACCI");
         console2.log("Image ID for FIBONACCI is ", vm.toString(imageId));
-        BonsaiStarter app = new BonsaiStarter(bonsaiRelay, imageId);
-        console2.log("Deployed BonsaiStarter to ", address(app));
+        BonsaiChess app = new BonsaiChess(bonsaiRelay, imageId);
+        console2.log("Deployed BonsaiChess to ", address(app));
 
         vm.stopBroadcast();
     }

@@ -22,7 +22,7 @@ import {BonsaiCallbackReceiver} from "bonsai/BonsaiCallbackReceiver.sol";
 /// @title A starter application using Bonsai through the on-chain relay.
 /// @dev This contract demonstrates one pattern for offloading the computation of an expensive
 //       or difficult to implement function to a RISC Zero guest running on Bonsai.
-contract BonsaiStarter is BonsaiCallbackReceiver {
+contract BonsaiChess is BonsaiCallbackReceiver {
     /// @notice board state in FEN notation.
     string public fen;
 

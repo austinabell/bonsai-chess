@@ -18,14 +18,14 @@ pragma solidity ^0.8.17;
 
 import {BonsaiTest} from "bonsai/BonsaiTest.sol";
 import {IBonsaiRelay} from "bonsai/IBonsaiRelay.sol";
-import {BonsaiStarter} from "contracts/BonsaiStarter.sol";
+import {BonsaiChess} from "contracts/BonsaiChess.sol";
 
-contract BonsaiStarterTest is BonsaiTest {
+contract BonsaiChessTest is BonsaiTest {
     function setUp() public withRelay {}
 
     function testMockCall() public {
         // Deploy a new starter instance
-        BonsaiStarter starter = new BonsaiStarter(
+        BonsaiChess starter = new BonsaiChess(
             IBonsaiRelay(bonsaiRelay),
             queryImageId("FIBONACCI")
         );
@@ -42,7 +42,7 @@ contract BonsaiStarterTest is BonsaiTest {
         // Anticipate a callback invocation on the starter contract
         vm.expectCall(
             address(starter),
-            abi.encodeWithSelector(BonsaiStarter.updateBoard.selector)
+            abi.encodeWithSelector(BonsaiChess.updateBoard.selector)
         );
         // Relay the solution as a callback
         runPendingCallbackRequest();
