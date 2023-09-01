@@ -53,13 +53,14 @@ contract BonsaiChess is BonsaiCallbackReceiver {
         gameState = GameState.Ongoing;
     }
 
-    event BoardUpdated(string prevBoard, string nextBoard);
+    event BoardUpdated(string prevBoard, string nextBoard, string move);
     event GameOver(GameState gameState);
 
     /// @notice Callback function logic for processing verified journals from Bonsai.
     function updateBoard(
         string memory prevBoard,
         string memory nextBoard,
+        string memory move,
         GameState state
     ) external onlyBonsaiCallback(fibImageId) {
         // Assert that the previous board state matches the current board state in the contract
@@ -72,7 +73,7 @@ contract BonsaiChess is BonsaiCallbackReceiver {
         fen = nextBoard;
         gameState = state;
 
-        emit BoardUpdated(prevBoard, nextBoard);
+        emit BoardUpdated(prevBoard, nextBoard, move);
         if (gameState != GameState.Ongoing) {
             emit GameOver(gameState);
         }

@@ -22,13 +22,11 @@ export function run(element: Element) {
 
   let cg: Api, vnode: VNode, contract: ethers.Contract;
 
-  // let fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+  // TODO might want to handle keeping same game and loading previous session before initializing
+  // new game. Not really worth for a PoC, though.
+  const chess = new Chess();
 
   function setupBoard(el: HTMLElement) {
-    // TODO might want to handle keeping same game and loading previous session before initializing
-    // new game. Not really worth for a PoC, though.
-    const chess = new Chess();
-
     const cg = Chessground(el, {
       highlight: {
         check: true,
@@ -43,21 +41,12 @@ export function run(element: Element) {
       movable: {
         events: {
           after: (orig: any, dest: any) => {
+            // TODO doesn't handle castling, en passant, promotion
             chess.move({ from: orig, to: dest });
             const moveUCI = `${orig}${dest}`;
 
             console.log("calling make move with", moveUCI);
             contract.makeMove(moveUCI).catch(console.error);
-            // chess.move(move.san);
-            // cg.move(move.from, move.to);
-            cg.set({
-              turnColor: toColor(chess),
-              movable: {
-                color: toColor(chess),
-                dests: toDests(chess),
-              },
-            });
-            cg.playPremove();
           },
         },
       },
@@ -136,16 +125,22 @@ export function run(element: Element) {
       contract = new ethers.Contract(contractAddr, abi, wallet);
       console.log("contract initialized", contractAddr);
 
-      contract.on("*", (ev) => {
-        console.log("ambiguous event");
-        console.log(ev);
+      contract.on("BoardUpdated", (prevBoard, nextBoard, engineMove) => {
+        const enginePiece = engineMove.slice(0, 2);
+        const engineDest = engineMove.slice(2, 4);
+        chess.move({ from: enginePiece, to: engineDest });
+        cg.move(enginePiece, engineDest);
+        cg.set({
+          turnColor: toColor(chess),
+          movable: {
+            color: toColor(chess),
+            dests: toDests(chess),
+          },
+        });
+        cg.playPremove();
+        // cg.redrawAll();
+        console.log("board updated", prevBoard, nextBoard);
       });
-      contract.on("BoardUpdated", (_, nextBoard) => {
-        // TODO
-        console.log("board updated", nextBoard);
-      });
-
-      // contract = new ethers.Contract(deployed.getAddress())
     } catch (e) {
       console.error(e);
     }

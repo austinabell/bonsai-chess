@@ -17,7 +17,7 @@
 use std::io::Read;
 
 use alloy_sol_types::{sol, SolType};
-use chess_engine::{Evaluate, Game, GameResult};
+use chess_engine::{Evaluate, Game, GameResult, Move};
 use risc0_zkvm::guest::env;
 
 risc0_zkvm::guest::entry!(main);
@@ -30,7 +30,22 @@ enum GameState {
     Draw = 3,
 }
 
-fn make_move(board_fen: &str, player_move: String) -> (Game, GameState) {
+/// Custom formatting of moves to be minimal format of UCI. Default format is
+/// verbose.
+fn format_move(m: Move) -> String {
+    match m {
+        Move::Piece(from, to) => format!("{}{}", from, to),
+        // TODO verify this format
+        Move::Promotion(from, to, piece) => {
+            format!("{}{} {}", from, to, piece.get_name())
+        }
+        Move::KingSideCastle => "O-O".to_string(),
+        Move::QueenSideCastle => "O-O-O".to_string(),
+        Move::Resign => "Resign".to_string(),
+    }
+}
+
+fn make_move(board_fen: &str, player_move: String) -> (Game, String, GameState) {
     // TODO this is a bit inefficient to handle as fen, since we are not handling
     // two player semantics and game details. Ideally this is serialized more
     // efficiently, but this is not built into this chess engine library.
@@ -39,8 +54,8 @@ fn make_move(board_fen: &str, player_move: String) -> (Game, GameState) {
     // Play the player's move.
     match game.board.play_move(player_move.try_into().unwrap()) {
         GameResult::Continuing(board) => game.board = board,
-        GameResult::Victory(_) => return (game, GameState::Win),
-        GameResult::Stalemate => return (game, GameState::Draw),
+        GameResult::Victory(_) => return (game, "".to_string(), GameState::Win),
+        GameResult::Stalemate => return (game, "".to_string(), GameState::Draw),
         GameResult::IllegalMove(e) => {
             panic!("Illegal move: {}", e);
         }
@@ -59,7 +74,7 @@ fn make_move(board_fen: &str, player_move: String) -> (Game, GameState) {
             panic!("Illegal move: {}", e);
         }
     };
-    (game, state)
+    (game, format_move(m), state)
 }
 
 type CallParams = sol! { tuple(string, string) };
@@ -73,16 +88,17 @@ fn main() {
     let (board_state, player_move) = CallParams::decode_params(&input_bytes, true).unwrap();
 
     // Update the player's move and calculate the engine's move.
-    let (result, state) = make_move(&board_state, player_move);
+    let (result, engine_move, state) = make_move(&board_state, player_move);
     // NOTE: timer and move count not used in fen notation. Would be ideal to just
     // not include at all, but no other serialization method implemented.
     let result_fen = result.to_fen(0, 0).unwrap();
 
     // Commit the journal that will be received by the application contract.
     // Encoded types should match the args expected by the application callback.
-    env::commit_slice(&<sol!(tuple(string, string, uint8))>::encode(&(
+    env::commit_slice(&<sol!(tuple(string, string, string, uint8))>::encode(&(
         board_state,
         result_fen,
+        engine_move,
         state as u8,
     )));
 }

@@ -2,14 +2,10 @@
 
 deploy:
 	$(eval LOGFILE := deploy_$(shell date +%s).log)
-	RISC0_DEV_MODE=true forge script script/Deploy.s.sol --rpc-url http://localhost:8545 --broadcast 2>&1  > $(LOGFILE)
-	@echo "If you want to update your environment variables based on the logs, run the following commands:"
-	@echo "BONSAI_RELAY_ADDRESS=$(shell grep 'Deployed BonsaiTestRelay to' deploy.log | awk '{print $$4}')" > ./frontend/.env
-	@echo "CHESS_ID=$(shell grep 'Image ID for CHESS is' deploy.log | awk '{print $$6}')" >> ./frontend/.env
-	@grep 'Deployed BonsaiTestRelay to' deploy.log | awk '{ print "export BONSAI_RELAY_ADDRESS=" $$4 }'
-	@grep 'Image ID for CHESS is' deploy.log | awk '{ print "export CHESS_ID=" $$6 }'
-	@grep 'Deployed BonsaiChess to' deploy.log | awk '{ print "export APP_ADDRESS=" $$4 }'
-	@rm $(LOGFILE)
+	RISC0_DEV_MODE=true forge script script/Deploy.s.sol --rpc-url http://localhost:8545 --broadcast
+
+redeploy:
+	RISC0_DEV_MODE=true DEPLOY_RELAY_ADDRESS="$$BONSAI_RELAY_ADDRESS" DEPLOY_UPLOAD_IMAGES=true forge script script/Deploy.s.sol --rpc-url http://localhost:8545 --broadcast
 
 build:
 	forge build
