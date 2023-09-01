@@ -12,6 +12,7 @@
     "noImplicitThis": true,
     "noUnusedParameters": true,
     "moduleResolution": "node",
+    "resolveJsonModule": true,
     "target": "ES2018",
     "module": "esnext",
     "lib": ["ES2018", "DOM"]

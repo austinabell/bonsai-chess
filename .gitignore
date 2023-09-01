@@ -1,6 +1,7 @@
 # Compiler files
 cache/
 out/
+deploy.log
 
 # Ignores development broadcast logs
 !/broadcast

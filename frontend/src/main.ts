@@ -10,24 +10,12 @@ import { Api } from "chessground/api";
 import { Chess } from "chess.js";
 import { Chessground } from "chessground";
 import { aiPlay, toDests } from "./util";
-// import { ethers } from "ethers";
+import { ethers } from "ethers";
+import { abi, bytecode } from "./contracts/BonsaiChess.json";
 
 export interface Unit {
   run: (el: HTMLElement) => Api;
 }
-
-// // Initialize provider with configurable RPC URL
-// // TODO be able to configure
-// const provider = new ethers.JsonRpcProvider("http://localhost:8545");
-// const wallet = new ethers.Wallet(YOUR_PRIVATE_KEY, provider);
-
-// // Deploy contract
-// const factory = new ethers.ContractFactory(abi, bytecode, wallet);
-// const contract = await factory.deploy();
-
-// contract.on("BoardUpdated", (_, nextBoard) => {
-//   // TODO
-// });
 
 export function run(element: Element) {
   const patch = init([classModule, attributesModule, eventListenersModule]);
@@ -80,6 +68,7 @@ export function run(element: Element) {
             postpatch: runUnit,
           },
         }),
+        // Just to add a bit of padding on the bottom, this is already styled.
         h("p", ""),
       ]),
       h("control", [
@@ -98,5 +87,35 @@ export function run(element: Element) {
     ]);
   }
 
+  async function deployAndHandleEvents() {
+    try {
+      // Load environment variables
+      const bonsaiRelayAddress = process.env.BONSAI_RELAY_ADDRESS;
+      const chessId = process.env.CHESS_ID;
+
+      // Initialize provider with configurable RPC URL
+      // TODO be able to configure the host
+      const provider = new ethers.JsonRpcProvider("http://localhost:8545");
+      const wallet = new ethers.Wallet(
+        "0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a",
+        provider
+      );
+
+      const factory = new ethers.ContractFactory(abi, bytecode, wallet);
+
+      // Deploy the contract
+      const contract = await factory.deploy(bonsaiRelayAddress, chessId);
+      await contract.deploymentTransaction()?.wait();
+
+      contract.on("BoardUpdated", (_, nextBoard) => {
+        // TODO
+        console.log("board updated", nextBoard);
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
   redraw();
+  deployAndHandleEvents().catch(console.error);
 }

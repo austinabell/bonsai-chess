@@ -15,19 +15,6 @@ export function toColor(chess: ChessInstance): Color {
   return (chess.turn() === 'w') ? 'white' : 'black';
 }
 
-export function playOtherSide(cg: Api, chess) {
-  return (orig, dest) => {
-    chess.move({from: orig, to: dest});
-    cg.set({
-      turnColor: toColor(chess),
-      movable: {
-        color: toColor(chess),
-        dests: toDests(chess)
-      }
-    });
-  };
-}
-
 export function aiPlay(cg: Api, chess: ChessInstance, delay: number, firstMove: boolean) {
   return (orig, dest) => {
     chess.move({from: orig, to: dest});
