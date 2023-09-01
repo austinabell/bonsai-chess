@@ -28,6 +28,9 @@ struct Args {
     /// Adress for the BonsaiChess application contract.
     address: Address,
 
+    /// Board fen string.
+    board_fen: String,
+
     /// Move to apply to the board and get a response from Bonsai.
     player_move: String,
 
@@ -52,7 +55,10 @@ async fn main() -> anyhow::Result<()> {
     .context("Failed to initialize the relay client")?;
 
     // Initialize the input for the CHESS guest.
-    let input = ethabi::encode(&[ethers::abi::Token::String(args.player_move)]);
+    let input = ethabi::encode(&[
+        ethers::abi::Token::String(args.board_fen),
+        ethers::abi::Token::String(args.player_move),
+    ]);
 
     // Create a CallbackRequest for your contract
     // example: (contracts/BonsaiChess.sol).

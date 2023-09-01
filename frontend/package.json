@@ -35,6 +35,6 @@
   "scripts": {
     "build": "rollup --config",
     "watch": "rollup --config --watch",
-    "serve": "http-server"
+    "serve": "http-server -p 3000"
   }
 }

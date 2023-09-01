@@ -21,4 +21,4 @@ serve:
 	cd ./frontend && npm run serve
 
 start-relay:
-	RISC0_DEV_MODE=true cargo run --bin bonsai-ethereum-relay-cli -- run --relay-address "$$BONSAI_RELAY_ADDRESS"
+	RISC0_DEV_MODE=true cargo run --bin bonsai-ethereum-relay-cli -- run --bonsai-api-url http://localhost:8082 --relay-address "$$BONSAI_RELAY_ADDRESS"

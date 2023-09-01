@@ -9,7 +9,7 @@ import {
 import { Api } from "chessground/api";
 import { Chess } from "chess.js";
 import { Chessground } from "chessground";
-import { aiPlay, toDests } from "./util";
+import { toColor, toDests } from "./util";
 import { ethers } from "ethers";
 import { abi, bytecode } from "./contracts/BonsaiChess.json";
 
@@ -20,15 +20,16 @@ export interface Unit {
 export function run(element: Element) {
   const patch = init([classModule, attributesModule, eventListenersModule]);
 
-  let cg: Api, vnode: VNode;
+  let cg: Api, vnode: VNode, contract: ethers.Contract;
 
-  let fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+  // let fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
   function setupBoard(el: HTMLElement) {
-    const chess = new Chess(fen);
+    // TODO might want to handle keeping same game and loading previous session before initializing
+    // new game. Not really worth for a PoC, though.
+    const chess = new Chess();
 
     const cg = Chessground(el, {
-      fen,
       highlight: {
         check: true,
       },
@@ -41,7 +42,23 @@ export function run(element: Element) {
     cg.set({
       movable: {
         events: {
-          after: aiPlay(cg, chess, 1000, false),
+          after: (orig: any, dest: any) => {
+            chess.move({ from: orig, to: dest });
+            const moveUCI = `${orig}${dest}`;
+
+            console.log("calling make move with", moveUCI);
+            contract.makeMove(moveUCI).catch(console.error);
+            // chess.move(move.san);
+            // cg.move(move.from, move.to);
+            cg.set({
+              turnColor: toColor(chess),
+              movable: {
+                color: toColor(chess),
+                dests: toDests(chess),
+              },
+            });
+            cg.playPremove();
+          },
         },
       },
     });
@@ -94,23 +111,40 @@ export function run(element: Element) {
       const chessId = process.env.CHESS_ID;
 
       // Initialize provider with configurable RPC URL
-      // TODO be able to configure the host
+      // TODO be able to configure the RPC url (though env likely)
       const provider = new ethers.JsonRpcProvider("http://localhost:8545");
       const wallet = new ethers.Wallet(
         "0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a",
         provider
       );
 
+      // Initialize contract factory to deploy the chess contract.
       const factory = new ethers.ContractFactory(abi, bytecode, wallet);
 
-      // Deploy the contract
-      const contract = await factory.deploy(bonsaiRelayAddress, chessId);
-      await contract.deploymentTransaction()?.wait();
+      // Deploy the contract and wait for the transaction to be finalized.
+      const contractInstance = await factory.deploy(
+        bonsaiRelayAddress,
+        chessId
+      );
+      await contractInstance.waitForDeployment();
+      console.log(contractInstance);
 
+      // NOTE: The new Ethers API is strange and must be re-initialized like this.
+      // Downgrading to Ethers v5 has issues with the rollup configuration.
+      const contractAddr = await contractInstance.getAddress();
+      contract = new ethers.Contract(contractAddr, abi, wallet);
+      console.log("contract initialized", contractAddr);
+
+      contract.on("*", (ev) => {
+        console.log("ambiguous event");
+        console.log(ev);
+      });
       contract.on("BoardUpdated", (_, nextBoard) => {
         // TODO
         console.log("board updated", nextBoard);
       });
+
+      // contract = new ethers.Contract(deployed.getAddress())
     } catch (e) {
       console.error(e);
     }
