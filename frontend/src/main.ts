@@ -109,6 +109,7 @@ export function run(element: Element) {
       // Load environment variables
       const bonsaiRelayAddress = process.env.BONSAI_RELAY_ADDRESS;
       const chessId = process.env.CHESS_ID;
+      console.log("deploying contract with", bonsaiRelayAddress, chessId);
 
       // Initialize provider with configurable RPC URL
       // TODO be able to configure the RPC url (though env likely)
