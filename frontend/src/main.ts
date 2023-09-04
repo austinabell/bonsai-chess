@@ -32,7 +32,7 @@ export function run(element: Element) {
         check: true,
       },
       movable: {
-        color: "white",
+        color: "black",
         free: false,
         dests: toDests(chess),
       },
@@ -41,6 +41,10 @@ export function run(element: Element) {
       movable: {
         events: {
           after: (orig: any, dest: any) => {
+            if (!contract) {
+              return;
+            }
+
             // TODO doesn't handle castling, en passant, promotion
             chess.move({ from: orig, to: dest });
             const moveUCI = `${orig}${dest}`;
@@ -124,6 +128,9 @@ export function run(element: Element) {
       const contractAddr = await contractInstance.getAddress();
       contract = new ethers.Contract(contractAddr, abi, wallet);
       console.log("contract initialized", contractAddr);
+      cg.set({
+        movable: { color: "white", free: false, dests: toDests(chess) },
+      });
 
       contract.on("BoardUpdated", (prevBoard, nextBoard, engineMove) => {
         const enginePiece = engineMove.slice(0, 2);
