@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::io::Write;
+use std::{io::Write, time::Duration};
 
 use anyhow::Context;
 use bonsai_ethereum_relay::{EthersClientConfig, Relayer};
@@ -226,12 +226,20 @@ async fn main() -> anyhow::Result<()> {
                 bonsai_api_key: args.global_opts.bonsai_api_key.clone(),
                 relay_contract_address: relay_address,
             };
-            let client_config =
-                EthersClientConfig::new(eth_node, eth_chain_id, private_key.try_into()?);
+
+            const WAIT_DURATION: Duration= Duration::from_secs(5);
+            const MAX_RETRIES: u64 = 60;
+            let client_config = EthersClientConfig::new(
+                eth_node,
+                eth_chain_id,
+                private_key.try_into()?,
+                MAX_RETRIES,
+                WAIT_DURATION,
+            );
             let server_handle = tokio::spawn(relayer.run(client_config));
 
             // HACK: Wait 1 second to give local Bonsai a chance to start.
-            std::thread::sleep(std::time::Duration::from_secs(1));
+            std::thread::sleep(Duration::from_secs(1));
 
             // Upload all locally defined images.
             upload_images(
