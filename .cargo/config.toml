@@ -5,7 +5,6 @@ rustflags = [
     "-Wclippy::complexity",
     "-Wclippy::perf",
     "-Wclippy::style",
-    "-Wclippy::unwrap_used",
     "-Wclippy::expect_used",
     "-Dclippy::needless_return",
     "-Dbad_style",

@@ -14,13 +14,10 @@
 
 #![no_main]
 
-use std::io::Read;
-
-use alloy_sol_types::{sol, SolType};
 use chess_engine::{Evaluate, Game, GameResult, Move};
-use risc0_zkvm::guest::env;
+use risc0_alloy::{sol, EthParams};
 
-risc0_zkvm::guest::entry!(main);
+derisc0::entry!(main);
 
 #[repr(u8)]
 enum GameState {
@@ -77,16 +74,10 @@ fn make_move(board_fen: &str, player_move: String) -> (Game, String, GameState) 
     (game, format_move(m), state)
 }
 
-type CallParams = sol! { tuple(string, string) };
-
-fn main() {
-    // Read data sent from the application contract.
-    let mut input_bytes = Vec::<u8>::new();
-    env::stdin().read_to_end(&mut input_bytes).unwrap();
-
-    // Decode parameters from the scheduled call on eth.
-    let (board_state, player_move) = CallParams::decode_params(&input_bytes, true).unwrap();
-
+fn main(
+    eth_params: EthParams<sol!(tuple(string, string))>,
+) -> EthParams<sol!(tuple(string, string, string, uint8))> {
+    let EthParams((board_state, player_move)) = eth_params;
     // Update the player's move and calculate the engine's move.
     let (result, engine_move, state) = make_move(&board_state, player_move);
     // NOTE: timer and move count not used in fen notation. Would be ideal to just
@@ -95,10 +86,5 @@ fn main() {
 
     // Commit the journal that will be received by the application contract.
     // Encoded types should match the args expected by the application callback.
-    env::commit_slice(&<sol!(tuple(string, string, string, uint8))>::encode(&(
-        board_state,
-        result_fen,
-        engine_move,
-        state as u8,
-    )));
+    EthParams((board_state, result_fen, engine_move, state as u8))
 }
