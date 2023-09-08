@@ -1,7 +1,6 @@
-# Start from rust template
 FROM ubuntu:20.04@sha256:3246518d9735254519e1b2ff35f95686e4a5011c90c85344c1f38df7bae9dd37
 
-# Install Rust
+# Install Rust and build dependencies
 RUN apt-get update
 RUN apt-get install -y --no-install-recommends git build-essential ca-certificates clang curl libssl-dev pkg-config ssh
 RUN curl --proto '=https' --tlsv1.2 --retry 10 --retry-connrefused -fsSL 'https://sh.rustup.rs' | sh -s -- -y
