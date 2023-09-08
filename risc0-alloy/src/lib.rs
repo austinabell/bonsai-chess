@@ -25,12 +25,6 @@ pub use alloy_sol_types::sol;
 #[must_use]
 pub struct EthParams<T: SolType>(pub T::RustType);
 
-// impl<T: SolType> From<T::RustType> for EthParams<T> {
-//     fn from(inner: T::RustType) -> Self {
-//         Self(inner)
-//     }
-// }
-
 impl<T> FromParameter for EthParams<T>
 where
     T: SolType,
