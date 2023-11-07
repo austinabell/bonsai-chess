@@ -451,16 +451,16 @@
     },
     "settings": {
       "remappings": [
-        ":bonsai/=lib/risc0/bonsai/ethereum/contracts/",
-        ":ds-test/=lib/forge-std/lib/ds-test/src/",
-        ":erc4626-tests/=lib/openzeppelin-contracts/lib/erc4626-tests/",
-        ":forge-std/=lib/forge-std/src/",
-        ":murky/=lib/murky/src/",
-        ":murky_differential_testing/=lib/murky/differential_testing/",
-        ":openzeppelin-contracts/=lib/openzeppelin-contracts/",
-        ":openzeppelin/=lib/openzeppelin-contracts/",
-        ":risc0/=lib/risc0/",
-        ":solidity-bytes-utils/=lib/solidity-bytes-utils/contracts/"
+        "bonsai/=lib/risc0/bonsai/ethereum/contracts/",
+        "ds-test/=lib/forge-std/lib/ds-test/src/",
+        "erc4626-tests/=lib/openzeppelin-contracts/lib/erc4626-tests/",
+        "forge-std/=lib/forge-std/src/",
+        "murky/=lib/murky/src/",
+        "murky_differential_testing/=lib/murky/differential_testing/",
+        "openzeppelin-contracts/=lib/openzeppelin-contracts/",
+        "openzeppelin/=lib/openzeppelin-contracts/",
+        "risc0/=lib/risc0/",
+        "solidity-bytes-utils/=lib/solidity-bytes-utils/contracts/"
       ],
       "optimizer": {
         "enabled": true,
