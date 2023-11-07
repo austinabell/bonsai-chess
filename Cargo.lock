@@ -325,6 +325,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "backoff"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b62ddb9cb1ec0a098ad4bbf9344d0713fa193ae1a80af55febcff2627b6a00c1"
+dependencies = [
+ "futures-core",
+ "getrandom",
+ "instant",
+ "pin-project-lite",
+ "rand",
+ "tokio",
+]
+
+[[package]]
 name = "backtrace"
 version = "0.3.68"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -456,8 +470,8 @@ dependencies = [
 
 [[package]]
 name = "bonsai-ethereum-contracts"
-version = "0.1.0"
-source = "git+https://github.com/risc0/risc0?branch=release-0.19#8b9b2a05b5ffe1e6293d2908f40252624dcee622"
+version = "0.5.0"
+source = "git+https://github.com/austinabell/risc0?branch=bonsai_poll_fix#7889aed0c90becabcd3d381f37f8e566a7eebfb4"
 dependencies = [
  "anyhow",
  "ethers",
@@ -465,12 +479,13 @@ dependencies = [
 
 [[package]]
 name = "bonsai-ethereum-relay"
-version = "0.1.0"
-source = "git+https://github.com/risc0/risc0?branch=release-0.19#8b9b2a05b5ffe1e6293d2908f40252624dcee622"
+version = "0.5.0"
+source = "git+https://github.com/austinabell/risc0?branch=bonsai_poll_fix#7889aed0c90becabcd3d381f37f8e566a7eebfb4"
 dependencies = [
  "anyhow",
  "async-trait",
  "axum",
+ "backoff",
  "bincode",
  "bonsai-ethereum-contracts",
  "bonsai-rest-api-mock",
@@ -519,8 +534,8 @@ dependencies = [
 
 [[package]]
 name = "bonsai-rest-api-mock"
-version = "0.1.0"
-source = "git+https://github.com/risc0/risc0?branch=release-0.19#8b9b2a05b5ffe1e6293d2908f40252624dcee622"
+version = "0.5.0"
+source = "git+https://github.com/austinabell/risc0?branch=bonsai_poll_fix#7889aed0c90becabcd3d381f37f8e566a7eebfb4"
 dependencies = [
  "anyhow",
  "axum",
@@ -539,7 +554,7 @@ dependencies = [
 [[package]]
 name = "bonsai-sdk"
 version = "0.5.0"
-source = "git+https://github.com/risc0/risc0?branch=release-0.19#8b9b2a05b5ffe1e6293d2908f40252624dcee622"
+source = "git+https://github.com/austinabell/risc0?branch=bonsai_poll_fix#7889aed0c90becabcd3d381f37f8e566a7eebfb4"
 dependencies = [
  "reqwest",
  "serde",
@@ -3422,7 +3437,7 @@ dependencies = [
 [[package]]
 name = "risc0-binfmt"
 version = "0.19.0"
-source = "git+https://github.com/risc0/risc0?branch=release-0.19#8b9b2a05b5ffe1e6293d2908f40252624dcee622"
+source = "git+https://github.com/austinabell/risc0?branch=bonsai_poll_fix#7889aed0c90becabcd3d381f37f8e566a7eebfb4"
 dependencies = [
  "anyhow",
  "elf",
@@ -3435,7 +3450,7 @@ dependencies = [
 [[package]]
 name = "risc0-build"
 version = "0.19.0"
-source = "git+https://github.com/risc0/risc0?branch=release-0.19#8b9b2a05b5ffe1e6293d2908f40252624dcee622"
+source = "git+https://github.com/austinabell/risc0?branch=bonsai_poll_fix#7889aed0c90becabcd3d381f37f8e566a7eebfb4"
 dependencies = [
  "anyhow",
  "cargo_metadata 0.17.0",
@@ -3451,7 +3466,7 @@ dependencies = [
 [[package]]
 name = "risc0-build-kernel"
 version = "0.19.0"
-source = "git+https://github.com/risc0/risc0?branch=release-0.19#8b9b2a05b5ffe1e6293d2908f40252624dcee622"
+source = "git+https://github.com/austinabell/risc0?branch=bonsai_poll_fix#7889aed0c90becabcd3d381f37f8e566a7eebfb4"
 dependencies = [
  "cc",
  "directories",
@@ -3463,7 +3478,7 @@ dependencies = [
 [[package]]
 name = "risc0-circuit-recursion"
 version = "0.19.0"
-source = "git+https://github.com/risc0/risc0?branch=release-0.19#8b9b2a05b5ffe1e6293d2908f40252624dcee622"
+source = "git+https://github.com/austinabell/risc0?branch=bonsai_poll_fix#7889aed0c90becabcd3d381f37f8e566a7eebfb4"
 dependencies = [
  "anyhow",
  "bytemuck",
@@ -3482,7 +3497,7 @@ dependencies = [
 [[package]]
 name = "risc0-circuit-recursion-sys"
 version = "0.19.0"
-source = "git+https://github.com/risc0/risc0?branch=release-0.19#8b9b2a05b5ffe1e6293d2908f40252624dcee622"
+source = "git+https://github.com/austinabell/risc0?branch=bonsai_poll_fix#7889aed0c90becabcd3d381f37f8e566a7eebfb4"
 dependencies = [
  "glob",
  "risc0-build-kernel",
@@ -3505,7 +3520,7 @@ dependencies = [
 [[package]]
 name = "risc0-circuit-rv32im"
 version = "0.19.0"
-source = "git+https://github.com/risc0/risc0?branch=release-0.19#8b9b2a05b5ffe1e6293d2908f40252624dcee622"
+source = "git+https://github.com/austinabell/risc0?branch=bonsai_poll_fix#7889aed0c90becabcd3d381f37f8e566a7eebfb4"
 dependencies = [
  "anyhow",
  "log",
@@ -3521,7 +3536,7 @@ dependencies = [
 [[package]]
 name = "risc0-circuit-rv32im-sys"
 version = "0.19.0"
-source = "git+https://github.com/risc0/risc0?branch=release-0.19#8b9b2a05b5ffe1e6293d2908f40252624dcee622"
+source = "git+https://github.com/austinabell/risc0?branch=bonsai_poll_fix#7889aed0c90becabcd3d381f37f8e566a7eebfb4"
 dependencies = [
  "glob",
  "risc0-build-kernel",
@@ -3540,7 +3555,7 @@ dependencies = [
 [[package]]
 name = "risc0-core"
 version = "0.19.0"
-source = "git+https://github.com/risc0/risc0?branch=release-0.19#8b9b2a05b5ffe1e6293d2908f40252624dcee622"
+source = "git+https://github.com/austinabell/risc0?branch=bonsai_poll_fix#7889aed0c90becabcd3d381f37f8e566a7eebfb4"
 dependencies = [
  "bytemuck",
  "rand_core",
@@ -3549,7 +3564,7 @@ dependencies = [
 [[package]]
 name = "risc0-sys"
 version = "0.19.0"
-source = "git+https://github.com/risc0/risc0?branch=release-0.19#8b9b2a05b5ffe1e6293d2908f40252624dcee622"
+source = "git+https://github.com/austinabell/risc0?branch=bonsai_poll_fix#7889aed0c90becabcd3d381f37f8e566a7eebfb4"
 dependencies = [
  "risc0-build-kernel",
 ]
@@ -3577,7 +3592,7 @@ dependencies = [
 [[package]]
 name = "risc0-zkp"
 version = "0.19.0"
-source = "git+https://github.com/risc0/risc0?branch=release-0.19#8b9b2a05b5ffe1e6293d2908f40252624dcee622"
+source = "git+https://github.com/austinabell/risc0?branch=bonsai_poll_fix#7889aed0c90becabcd3d381f37f8e566a7eebfb4"
 dependencies = [
  "anyhow",
  "blake2",
@@ -3626,7 +3641,7 @@ dependencies = [
 [[package]]
 name = "risc0-zkvm"
 version = "0.19.0"
-source = "git+https://github.com/risc0/risc0?branch=release-0.19#8b9b2a05b5ffe1e6293d2908f40252624dcee622"
+source = "git+https://github.com/austinabell/risc0?branch=bonsai_poll_fix#7889aed0c90becabcd3d381f37f8e566a7eebfb4"
 dependencies = [
  "addr2line 0.21.0",
  "anyhow",
@@ -3670,7 +3685,7 @@ source = "git+https://github.com/risc0/risc0?rev=da5bc39089c6dba8b03510837f1c736
 [[package]]
 name = "risc0-zkvm-platform"
 version = "0.19.0"
-source = "git+https://github.com/risc0/risc0?branch=release-0.19#8b9b2a05b5ffe1e6293d2908f40252624dcee622"
+source = "git+https://github.com/austinabell/risc0?branch=bonsai_poll_fix#7889aed0c90becabcd3d381f37f8e566a7eebfb4"
 dependencies = [
  "bytemuck",
  "getrandom",

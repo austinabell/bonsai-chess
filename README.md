@@ -1,3 +1,22 @@
+Missing:
+- Randomness brought in from on-chain to make moves non-deterministic
+- Persistence of game across page reload (likely browser storage for contract address)
+- Certain things like castling not handled with chess engine (need to translate notation)
+
+Bonsai Notes:
+- Unclear how to benchmark or utilities for it
+- Interface between Eth and risc0 not constrained by types
+  - Maybe best to output to ABI file, generate Rust types with alloy
+- Rust language server doesn't work with risc0 project setup, not specific to Bonsai but really annoying
+- Tedious that relay has to be started by reading log statements and setting an environment variable to use with forge scripts
+  - Unclear if there is a better solution, but some watch command would be nice
+- No good errors for when relay is not functional or misses a call
+- Build utilities to wrap cast to not have to handle formatting, deserialization into decrypted types
+- Expose a log file for what bonsai executes in the prover
+- Race condition in foundry output and writing to file
+
+<!-- TODO clean up docs -->
+
 # Bonsai Foundry Template
 
 Starter template for writing an application using [Bonsai].
