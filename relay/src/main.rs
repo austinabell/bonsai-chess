@@ -198,7 +198,7 @@ async fn main() -> anyhow::Result<()> {
             let server_handle = tokio::spawn(relayer.run(client_config));
 
             // HACK: Wait 1 second to give local Bonsai a chance to start.
-            std::thread::sleep(Duration::from_secs(2));
+            std::thread::sleep(Duration::from_secs(1));
 
             // Upload all locally defined images.
             upload_images(
